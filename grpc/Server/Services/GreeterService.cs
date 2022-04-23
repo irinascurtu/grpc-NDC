@@ -11,19 +11,19 @@ namespace Server.Services
             _logger = logger;
         }
 
-        public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
+        public override Task<Response> SayHello(Request request, ServerCallContext context)
         {
-            return Task.FromResult(new HelloReply
+            return Task.FromResult(new Response
             {
-                Message = "Hello " + request.Name
+                Message = "Hello back with the :" + request.ContentValue + "Value"
             });
         }
 
-        public override async Task ServerStream(HelloRequest request, IServerStreamWriter<HelloReply> responseStream, ServerCallContext context)
+        public override async Task ServerStream(Request request, IServerStreamWriter<Response> responseStream, ServerCallContext context)
         {
             for (int i = 0; i < 10000; i++)
             {
-                var message = new HelloReply
+                var message = new Response
                 {
                     Message = "Hello " + i
                 };
@@ -37,32 +37,32 @@ namespace Server.Services
             context.ResponseTrailers.Add(myHeader);
         }
 
-        public override async Task<HelloReply> ClientStream(IAsyncStreamReader<HelloRequest> requestStream, ServerCallContext context)
+        public override async Task<Response> ClientStream(IAsyncStreamReader<Request> requestStream, ServerCallContext context)
         {
             var baseMessage = "I got ";
-            HelloReply reply = new HelloReply() { Message = baseMessage };
+            Response reply = new Response() { Message = baseMessage };
 
             while (await requestStream.MoveNext())
             {
 
                 var payload = requestStream.Current;
                 Console.WriteLine($"I got a request with: {payload}");
-                reply.Message = baseMessage + payload.Name.ToString();
+                reply.Message = baseMessage + payload.ContentValue.ToString();
             }
             return reply;
         }
 
-        public override async Task BiDirectional(IAsyncStreamReader<HelloRequest> requestStream, IServerStreamWriter<HelloReply> responseStream, ServerCallContext context)
+        public override async Task BiDirectional(IAsyncStreamReader<Request> requestStream, IServerStreamWriter<Response> responseStream, ServerCallContext context)
         {
             var baseMessage = "";
 
-            HelloReply reply = new HelloReply() { Message = baseMessage };
+            Response reply = new Response() { Message = baseMessage };
             while (await requestStream.MoveNext())
             {
                 var payload = requestStream.Current;
 
 
-                reply.Message = baseMessage + payload.Name.ToString();
+                reply.Message = baseMessage + payload.ContentValue.ToString();
                 await responseStream.WriteAsync(reply);
 
             }

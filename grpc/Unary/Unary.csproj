@@ -8,7 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.44.0" />
+    <PackageReference Include="Grpc" Version="2.45.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.45.0" />
   </ItemGroup>
+	<ItemGroup>
+		<Protobuf Include="..\Server\Protos\greet.proto" GrpcServices="Client">
+		</Protobuf>
+	</ItemGroup>
 	
 </Project>
