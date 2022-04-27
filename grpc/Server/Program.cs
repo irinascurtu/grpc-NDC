@@ -1,4 +1,6 @@
+using Grpc.Net.Compression;
 using Server.Services;
+using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,7 +8,21 @@ var builder = WebApplication.CreateBuilder(args);
 // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
 
 // Add services to the container.
-builder.Services.AddGrpc();
+//builder.Services.AddGrpc();
+
+builder.Services.AddGrpc(options =>
+{
+    options.EnableDetailedErrors = true;
+    // options.MaxReceiveMessageSize = 2 * 1024 * 1024; // 2 MB
+    //   options.MaxSendMessageSize = 5 * 1024 * 1024; // 5 MB
+    options.ResponseCompressionLevel = CompressionLevel.Optimal;
+    options.ResponseCompressionAlgorithm = "gzip";
+    options.CompressionProviders = new List<ICompressionProvider>()
+    {
+        //brotli or your own
+    };
+   // options.Interceptors
+});
 
 var app = builder.Build();
 

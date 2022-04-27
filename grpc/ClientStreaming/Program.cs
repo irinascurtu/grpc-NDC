@@ -4,10 +4,6 @@ using Server;
 Channel channel = new Channel("127.0.0.1:5214", ChannelCredentials.Insecure);
 
 var client = new Greeter.GreeterClient(channel);
-//var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-
-///Server Stream
-var cts = new CancellationTokenSource();
 
 try
 {
