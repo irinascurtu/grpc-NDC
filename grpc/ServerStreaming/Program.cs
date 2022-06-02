@@ -10,20 +10,20 @@ namespace Client
     {
         static async Task Main(string[] args)
         {
-            Channel channel = new Channel("127.0.0.1:5214", ChannelCredentials.Insecure);
+            Channel channel = new Channel("127.0.0.1:5000", ChannelCredentials.Insecure);
 
             var client = new Server.Greeter.GreeterClient(channel);
 
 
 
             ///Server Stream
-            var cts = new CancellationTokenSource();
-            using var streamingCall = client.ServerStream(new Request(), cancellationToken: cts.Token);
+           // var cts = new CancellationTokenSource();
+            // using var streamingCall = client.ServerStream(new Request(), cancellationToken: cts.Token);
 
-            //var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-            //using var streamingCall = client.ServerStream(new Server.Request(),
-            //                                            deadline: DateTime.UtcNow.AddMilliseconds(1),
-            //                                            cancellationToken: cts.Token);
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            using var streamingCall = client.ServerStream(new Server.Request(),
+                                                        deadline: DateTime.UtcNow.AddMilliseconds(1),
+                                                        cancellationToken: cts.Token);
 
             try
             {

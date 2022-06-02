@@ -13,16 +13,16 @@ namespace Server.Services
 
         public override Task<Response> SayHello(Request request, ServerCallContext context)
         {
-            //context.GetHttpContext();
+            var contextv= context.GetHttpContext();
 
-            // var user = context.GetHttpContext().User;
+             var user = context.GetHttpContext().User;
             // ... access data from ClaimsPrincipal ...
 
 
             //  var clientCertificate = httpContext.Connection.ClientCertificate;
 
-            //var userAgent = context.RequestHeaders.GetValue("user-agent");
-            // context.ResponseTrailers.Add(new Metadata.Entry("Trailing", "i'm in front row acting like a header!"));
+            var userAgent = context.RequestHeaders.GetValue("user-agent");
+             context.ResponseTrailers.Add(new Metadata.Entry("Trailing", "i'm in front row acting like a header!"));
          
 
             return Task.FromResult(new Response

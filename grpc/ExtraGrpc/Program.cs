@@ -5,7 +5,6 @@ using Grpc.Net.Client.Balancer;
 using Grpc.Net.Client.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Server;
-using System.Net;
 
 var defaultMethodConfig = new MethodConfig
 {

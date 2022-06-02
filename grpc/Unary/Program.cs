@@ -1,13 +1,12 @@
 ﻿using Grpc.Core;
 using Grpc.Net.Client;
 using Server;
-using static Grpc.Core.Metadata;
 
 Console.WriteLine("Hello, World!");
 
 //Channel channel = new Channel("localhost:5000", ChannelCredentials.Insecure);
 
-var channel = GrpcChannel.ForAddress("http://localhost:5000",
+var channel = GrpcChannel.ForAddress("http://localhost:5061",
     new GrpcChannelOptions
     {
         Credentials = ChannelCredentials.Insecure,
@@ -22,13 +21,13 @@ Request request = new Request() { ContentValue = "NDC" };
 
 Console.WriteLine($"sending: {request.ContentValue}");
 
-//var response = client.SayHello(request, options: new CallOptions() { });
+var response = client.SayHello(request, options: new CallOptions() { });
 
-var response = await client.SayHelloAsync(
-        request,
-       // headers: new Metadata().Add(new Entry("my-fake-header", "grpc-header")), 
-        deadline: DateTime.UtcNow.AddSeconds(5),
-        cancellationToken: cts.Token);
+//var response = await client.SayHelloAsync(
+//        request,
+//       // headers: new Metadata().Add(new Entry("my-fake-header", "grpc-header")), 
+//        deadline: DateTime.UtcNow.AddSeconds(5),
+//        cancellationToken: cts.Token);
 
 
 Console.WriteLine(response.Message);
