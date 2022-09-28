@@ -13,22 +13,22 @@ namespace Server.Services
 
         public override Task<Response> SayHello(Request request, ServerCallContext context)
         {
-            var contextv= context.GetHttpContext();
+            #region context
+            var contextv = context.GetHttpContext();
 
-             var user = context.GetHttpContext().User;
+            var user = context.GetHttpContext().User;
             // ... access data from ClaimsPrincipal ...
-
-
             //  var clientCertificate = httpContext.Connection.ClientCertificate;
-
+            #endregion
+            #region headers
             var userAgent = context.RequestHeaders.GetValue("user-agent");
-             context.ResponseTrailers.Add(new Metadata.Entry("Trailing", "i'm in front row acting like a header!"));
-         
+            context.ResponseTrailers.Add(new Metadata.Entry("Trailing", "i'm in front row acting like a header!"));
+            #endregion
 
             return Task.FromResult(new Response
             {
-                Message = $"Hello back with the : { request.ContentValue } from {context.Host.ToString()}"
-            });;
+                Message = $"Hello back with : {request.ContentValue} value from the {context.Host.ToString()} Server"
+            }); ;
         }
 
         public override async Task ServerStream(Request request, IServerStreamWriter<Response> responseStream, ServerCallContext context)
@@ -43,9 +43,9 @@ namespace Server.Services
 
                 await responseStream.WriteAsync(message);
             }
-
+            #region responseHeaders
             Metadata.Entry myHeader = new Metadata.Entry("my-fake-header", "grpc-header");
-
+            #endregion
             context.ResponseTrailers.Add(myHeader);
         }
 

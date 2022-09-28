@@ -1,4 +1,5 @@
 using Grpc.Net.Compression;
+using Server.Interceptors.Server;
 using Server.Services;
 using System.IO.Compression;
 
@@ -21,7 +22,9 @@ builder.Services.AddGrpc(options =>
     {
         //brotli or your own
     };
-   // options.Interceptors
+
+    options.Interceptors.Add<ServerLoggingInterceptor>();
+    // options.Interceptors
 });
 
 var app = builder.Build();

@@ -15,19 +15,28 @@ var defaultMethodConfig = new MethodConfig
         InitialBackoff = TimeSpan.FromSeconds(1),
         MaxBackoff = TimeSpan.FromSeconds(5),
         BackoffMultiplier = 1.5,
-        RetryableStatusCodes = { StatusCode.Unavailable }
+        RetryableStatusCodes = { StatusCode.Unavailable, StatusCode.DeadlineExceeded }
     },
-    // HedgingPolicy
+
+    //HedgingPolicy = new HedgingPolicy
+    //{
+    //    HedgingDelay = TimeSpan.FromSeconds(30),
+    //    MaxAttempts = 4,
+    //    NonFatalStatusCodes = { StatusCode.Unavailable, }
+    //}
 };
 
-//var channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions
+
+
+
+//var channel = GrpcChannel.ForAddress("https://localhost:5000", new GrpcChannelOptions
 //{
 //    ServiceConfig = new ServiceConfig
 //    {
 //        MethodConfigs = {
 //            defaultMethodConfig
 //        },
-//        //RetryThrottling = {},
+//        RetryThrottling = { },
 //        //LoadBalancingConfigs = { }
 //    }
 //});
@@ -45,15 +54,11 @@ var factory = new StaticResolverFactory(addr => new[]
 var services = new ServiceCollection();
 services.AddSingleton<ResolverFactory>(factory);
 
-//var services = new ServiceCollection();
-//services.AddSingleton<ResolverFactory>(new DnsResolverFactory(refreshInterval: TimeSpan.FromSeconds(30)));
-
-var channel = GrpcChannel.ForAddress(
-    "static:///my-example-host",
+var channel = GrpcChannel.ForAddress(//uses grpc lib
+    "static:///localhost",
     new GrpcChannelOptions
     {
         Credentials = ChannelCredentials.Insecure,
-
         ServiceConfig = new ServiceConfig
         {
             LoadBalancingConfigs = { new RoundRobinConfig() }
@@ -61,6 +66,8 @@ var channel = GrpcChannel.ForAddress(
         ServiceProvider = services.BuildServiceProvider()
     });
 
+//var services = new ServiceCollection();
+//services.AddSingleton<ResolverFactory>(new DnsResolverFactory(refreshInterval: TimeSpan.FromSeconds(30)));
 
 #region actualcall
 Request request = new Request() { ContentValue = "NDC" };

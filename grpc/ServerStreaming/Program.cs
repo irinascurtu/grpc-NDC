@@ -11,37 +11,32 @@ namespace Client
         static async Task Main(string[] args)
         {
             Channel channel = new Channel("127.0.0.1:5000", ChannelCredentials.Insecure);
-
             var client = new Server.Greeter.GreeterClient(channel);
 
+            var cts = new CancellationTokenSource();
+            using var streamingCall = client.ServerStream(new Request(), cancellationToken: cts.Token);
 
-
-            ///Server Stream
-           // var cts = new CancellationTokenSource();
-            // using var streamingCall = client.ServerStream(new Request(), cancellationToken: cts.Token);
-
-            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-            using var streamingCall = client.ServerStream(new Server.Request(),
-                                                        deadline: DateTime.UtcNow.AddMilliseconds(1),
-                                                        cancellationToken: cts.Token);
+            //var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            //using var streamingCall = client.ServerStream(new Server.Request(),
+            //                                            deadline: DateTime.UtcNow.AddMilliseconds(1),
+            //                                            cancellationToken: cts.Token);
 
             try
             {
                 await foreach (Response response in streamingCall.ResponseStream.ReadAllAsync(cancellationToken: cts.Token))
                 {
-
                     Console.WriteLine($"{response.Message}");
                 }
 
                 var trailers = streamingCall.GetTrailers();
                 var myValue = trailers.GetValue("my-fake-header");
-                Console.WriteLine($"found some trailer trailer values:{myValue}");
+                Console.WriteLine($"found some trailer values in the gRPC response:{myValue}");
 
 
             }
             catch (RpcException ex) when (ex.StatusCode == StatusCode.DeadlineExceeded)
             {
-                Console.WriteLine("Greeting timeout.");
+                Console.WriteLine("Your greetings timeout'd :)).");
             }
             catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled)
             {
